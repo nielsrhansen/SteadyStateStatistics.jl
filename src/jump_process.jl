@@ -72,14 +72,14 @@ function plot(Z::jump_process; kwargs...)
             ylabel = "Cumulative jumps",
             title = "Jump process";
             kwargs...
-        ) |> display
+        ) 
     for k in 2:size(Z.Δ, 1)
         jumps = Z.Δ[k, :] .!= 0
         Plots.plot!(
             Z.t[jumps], 
             cum_jumps[k, jumps];
             kwargs...
-        ) |> display
+        )
     end
-    Plots.ylims!(minimum(cum_jumps), maximum(cum_jumps))
+    Plots.ylims!(minimum(cum_jumps) - 1, maximum(cum_jumps) + 1) |> display
 end
