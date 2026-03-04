@@ -250,8 +250,9 @@ function two_step_estimator(X::Array{Float64,2})
     masku = [α < β for α in 1:d, β in 1:d]
     maskl = [α > β for α in 1:d, β in 1:d]
     S_hat[maskl] = -S_hat[masku]
+    M_hat = S_hat * K2_hat_inv
 
-    return S_hat * K2_hat_inv
+    return M_hat
 end
 
 function two_step_shrinkage_estimator(X::Array{Float64,2})
