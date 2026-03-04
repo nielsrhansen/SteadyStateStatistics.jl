@@ -3,6 +3,10 @@ struct jump_process
     Δ::Array{Float64, 2} # Jumps in d dimensions
 end
 
+# This structure implements multivariate compound Poisson processes where the coordinates are independent,
+# that is, any jump is only in one coordinate, and the jump distributions are given as an array of marginal 
+#distributions.
+
 struct compound_poisson
     d::Int
     λ::Array{Float64, 1}
@@ -19,6 +23,17 @@ function rand(x::compound_poisson, r::Integer = 1)
     end
     return jump_process(t, Δ)
 end
+
+function cumulants(x::compound_poisson, k::Int)
+    d = size(x.λ, 1)
+    cum = zeros(d)
+        for i in 1:d
+            cum[i] = x.λ[i] * raw_moments(x.jump[i], k)
+        end
+    return cum
+end
+
+# Three specific jump distributions.
 
 function compound_gamma(d; λ = 1, α = 1, θ = 1)
     if (length(λ) == 1)
@@ -61,6 +76,8 @@ function compound_beta(d; λ = 1, α = 1, β = 1)
     end
     return compound_poisson(d, λ, [Beta(α[i], β[i]) for i in 1:d])
 end
+
+# Visualization of jump processes.
 
 function plot(Z::jump_process; kwargs...)
     jumps = Z.Δ[1, :] .!= 0
