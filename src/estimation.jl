@@ -177,6 +177,19 @@ function construct_full_A4(K2::Array{Float64,2}, K3::Array{Float64,3}, K4::Array
     return [A23; A4[mask4_vec, :]] 
 end 
 
+function compute_AΩA(Xs::Vector{Array{Float64,2}})
+    n = size(Xs[1], 1)
+    K_hat = cumulants(Xs[i], 3) 
+    A_hat = construct_full_A3(Array(K_hat[2]), Array(K_hat[3]))
+    AX = zeros(length(Xs), length(A_hat))
+    for i in 1:length(Xs)
+        K_hat = cumulants(Xs[i], 3) 
+        A_hat = construct_full_A3(Array(K_hat[2]), Array(K_hat[3]))
+        AX[i, :] = vec(A_hat)
+    end
+    return n * cov(AX)
+end
+
 function linear_estimator(X::Array{Float64,2})
     d = size(X, 2)
     K_hat = cumulants(X, 3) 
